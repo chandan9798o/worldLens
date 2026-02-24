@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Lens</title>
+
+<style>
+    .adar{
+    color: white;
+    background-color: black;
+    padding: 12px 13px;
+    font-size: 70px;
+    border-radius: 10px;
+    font-family: 'Trebuchet MS', Arial, sans-serif;
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);   /* 🔥 THIS IS IMPORTANT */
+}
+    body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        font-family: Arial, sans-serif;
+    }
+
+    .wrapper {
+        text-align: center;
+    }
+
+    .card {
+        top:30%;
+        width: 420px;
+        padding : 35px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 10px 10px 45px rgba(0,0,0,0.2);
+        margin-bottom: 30px;
+        margin-top: 40%;
+    }
+
+    .card img {
+        width: 300px;
+        border-radius: 10px;
+        padding-bottom: 10px;
+    }
+
+    .card h2 {
+        margin: 10px 20px;
+        font-size: 70px;
+    }
+
+    .card p {
+        margin: 10px ;
+        color: #464444;
+        font-size: 30px ;
+    }
+
+    .buttons button {
+        padding: 10px 20px;
+        font-size: 20px;
+        margin: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .prev {
+        background: #ff0000;
+        color: white;
+    }
+    .prev:hover{
+        background: #ffffff;
+        color:black;
+    }
+
+    .next {
+        background: #10e217;
+        color: white;
+    }
+    .next:hover{
+        background-color: #ffffff;
+        color:black;
+    }
+
+    button:hover {
+        opacity: 0.1;
+    }
+</style>
+</head>
+
+<body>
+    <h1 class="adar">WorldLens</h1>
+
+<div class="wrapper">
+    <div id="container"></div>
+
+    <div class="buttons">
+        <button class="prev">Previous</button>
+        <button class="next">Next</button>
+    </div>
+</div>
+
+<script>
+const container = document.querySelector('#container');
+const nextBtn = document.querySelector('.next');
+const prevBtn = document.querySelector('.prev');
+
+const countries = ["russia", "bangladesh", "afghanistan", "sri-lanka", "saudi arabia", "india", "China", "japan", "brazil", "bhutan", "pakistan", "argentina", "angola"];
+let currentIndex = 0;
+
+function loadCountry(countryName) {
+    const request = new XMLHttpRequest();
+    request.open('GET', `https://restcountries.com/v3.1/name/${countryName}`);
+    request.send();
+
+    request.addEventListener('load', function () {
+        const [data] = JSON.parse(this.responseText);
+
+        const htmlData = `
+            <div class="card">
+                <img src="${data.flags.png}" />
+                <h2>${data.name.common}</h2>
+                <p><strong>Capital:</strong> ${data.capital?.[0] || "N/A"}</p>
+                <p><strong>Region:</strong> ${data.region}</p>
+                <p><strong>Population:</strong> ${data.population.toLocaleString()}</p>
+                <p><strong>Language:</strong> ${data.languages ? Object.values(data.languages).join(", ") : "N/A"}</p>
+            </div>
+        `;
+
+        container.innerHTML = htmlData;
+    });
+}
+
+// Load first country initially
+loadCountry(countries[currentIndex]);
+
+// Next button
+nextBtn.addEventListener('click', function () {
+    currentIndex++;
+    if (currentIndex >= countries.length) {
+        currentIndex = 0;
+    }
+    loadCountry(countries[currentIndex]);
+});
+
+// Previous button
+prevBtn.addEventListener('click', function () {
+    currentIndex--;
+    if (currentIndex < 0) {
+        currentIndex = countries.length - 1;
+    }
+    loadCountry(countries[currentIndex]);
+});
+</script>
+
+</body>
+</html>
